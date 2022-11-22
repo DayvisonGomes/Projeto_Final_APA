@@ -15,12 +15,16 @@ private:
     
 public:
 
+    int id;
     vector<int> itens;
+    vector<int> pesos;
 
-    Treno(int capacidade);
+    Treno(int id, int capacidade);
     ~Treno();
 
     void set_capacidade(int new_capacidade);
     int get_capacidade();
+
+    void print_itens();
 
 };
