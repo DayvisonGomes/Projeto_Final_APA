@@ -1,42 +1,27 @@
 #include "../include/funcoes.h"
 
-void ler_arquivo(string path, vector<string> &info, vector<int> &vetor_p, vector<int> &vetor_L){
+void ler_arquivo(string path, vector<int> &info, vector<int> &vetor_p, vector<int> &vetor_L){
     
     ifstream arq(path); 
-    string ch;
-    int cont = 1, aux;
+    string temp;
+    int t;
+    arq >> temp;
 
-    while(getline(arq, ch)){
-
-        if (cont == 6){
-            for (int i = 0; i < ch.length(); i++){
-
-                if (ch[i] == ' '){
-                    continue;
-                }else{
-                    vetor_p.push_back(ch[i] - 48);
-                }
-            }
-            
-        }else if (cont >= 8){
-            for (int i = 0; i < ch.length(); i++){
-
-                if (ch[i] == ' '){
-                    continue;
-                }else{
-                    vetor_L.push_back(ch[i] - 48);
-                }   
-            
-            }
-
-        }else if (cont != 5){
-            info.push_back(ch);
-        }
-
-        cont += 1;
-
+    for (int i = 0; i < 4; i++){
+        arq >> t;
+        info.push_back(t); 
     }
     
+    for (int i = 0; i < info[0] - 1; i++){
+        arq >> t;
+        vetor_p.push_back(t);
+    }
+
+    for (int i = 0; i < info[3] * 2; i++){
+        arq >> t;
+        vetor_L.push_back(t);
+    }
+
 }
 
 void insertion_sort(vector<int> &p){
@@ -59,61 +44,118 @@ void insertion_sort(vector<int> &p){
 
 void guloso(vector<Treno*> *trenos,int numero_presentes, int capacidade, int k, vector<int> &vetor_p, vector<int> &vetor_L){
 
-    int maior_peso, indice, it, tamanho;
-    vector<int> p_ordenado;
+    int maior_peso, indice, it;
+    int tamanho = vetor_L.size();
+    int coloca;
+    vector<int> p_ordenado, aux_p;
     
     for (int i = 0; i < vetor_p.size(); i++){
         p_ordenado.push_back(vetor_p[i]);
+        aux_p.push_back(vetor_p[i]);
     }
     
     insertion_sort(p_ordenado);
 
-    for (int j = 0; j < k; j++){
+    for (int j = 0; j <= k; j++){
 
         Treno *treno;
-        treno = new Treno(j,capacidade);
-        it = 0;
+        treno = new Treno(j, capacidade);
 
-        while (it < numero_presentes){
-            maior_peso = p_ordenado[it];
-            
-            if (treno->get_capacidade() >= maior_peso){
+        for (int i = 0; i <= numero_presentes; i++){
+            maior_peso = p_ordenado[i];
 
-                for (int i = 0; i < vetor_p.size(); i++){
-                    if (vetor_p[i] == maior_peso){
+            if (treno->get_capacidade() >= maior_peso & maior_peso > 0){
+                coloca = 1;
+
+                for (int i = 0; i <= vetor_p.size(); i++){
+                    if (vetor_p[i] == maior_peso & aux_p[i] > 0){
                         indice = i + 1;
                     }
                 }
 
-                // tamanho = aux_L.size() / 2;
-                // for (int m = 0; m < tamanho; m++){
-                //     if (treno->itens[indice] == NULL){
-                //         break;
-                //     }
+                if (!treno->itens.empty()){
 
-                //     if (m == 0){
-                //         if (indice == aux_L[m] || indice == aux_L[m+1]){
+                    for (int i = 2; i <= tamanho; i = i + 2){
+                        if (vetor_L[i-2] == indice){
+
+                            for (int k = 0; k < treno->itens.size(); k++){
+                                if (treno->itens[k] == vetor_L[i-1]){
+                                    coloca = 0;
+                                    break;
+                                }
+                            }
+                        
+                        }else{
+                            if (vetor_L[i-1] == indice){
+
+                                for (int k = 0; k < treno->itens.size(); k++){
+                                    if (treno->itens[k] == vetor_L[i-2]){
+                                        coloca = 0;
+                                        break;
+                                    }
+                                }
+
+                            }
                             
-                //         }
+                        }
 
-                //     }else{
-                //         aux_L[m+1] aux_L[m+2]
-                //     }
-                // }
+                        if (coloca == 0){
+                            break;
+                        }
 
-                treno->itens.push_back(indice);
-                treno->set_capacidade(treno->get_capacidade() - maior_peso);
-                treno->pesos.push_back(maior_peso);
-                p_ordenado.erase(p_ordenado.begin() + it);
-                it = 0;
+                    }
 
-            }else{
-                it += 1;
-            }
-        }   
-        
-        trenos->push_back(treno);
+                }
                 
+                if (coloca == 0){
+                    continue;
+
+                }else{
+                    treno->itens.push_back(indice);
+                    treno->set_capacidade(treno->get_capacidade() - maior_peso);
+                    treno->pesos.push_back(maior_peso);
+                    p_ordenado[i] = 0;
+                    aux_p[indice - 1] = 0;
+                }
+
+            }
+
+        }
+
+        trenos->push_back(treno);
+
+        int sum;
+        int teste;
+        int indiceee;
+
+        sum = 0;
+        teste = 0;
+        indiceee = 0;
+
+        for (int i = 0; i <= p_ordenado.size(); i++){
+            if (p_ordenado[i] == 0){
+                sum += 1;
+            }
+        }
+
+        for (int i = 0; i <= p_ordenado.size(); i++){
+            if (p_ordenado[i] != 0){
+                teste += 1;
+                indiceee = i;
+            }
+        }
+
+        
+        if (sum == p_ordenado.size()){
+            
+            cout << "Presentes adicionados: " << sum + 1 << endl;
+            cout << "Faltou quantos presentes: " << teste << endl;
+            cout << "Quem e: " << p_ordenado[indiceee] << endl;
+
+            break;
+
+        }
+     
     }
         
 }
