@@ -4,7 +4,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <typeinfo>
-
+#include <time.h>
 using namespace std;
 
 class Treno {
