@@ -48,13 +48,11 @@ int main(){
     cout << "Tempo em ms: " << tDecorrido << endl;
     cout << endl;
 
-    // if (instancias[i] == "n60_k150_A"){
-    //   int test;
+    re_insertion(trenos, vetor_L, Q);
 
-    //   test = solucao(trenos, numero_presentes, 1);
-
-    //   break;
-    // }
+    
+    break;
+    
   
   }
 
