@@ -19,7 +19,7 @@ void Treno::print_itens(){
 
     for (int i = 0; i < itens.size(); i++){
         if (itens[i] != 0){
-            cout << "Treno : " << id + 1 << " Item : " << itens[i] << " Peso : " << pesos[i] << endl;  
+            cout << "Treno: " << id + 1 << " Item: " << itens[i] << " Peso: " << pesos[i] << endl;  
 
         }
     }

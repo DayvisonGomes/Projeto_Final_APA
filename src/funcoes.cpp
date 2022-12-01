@@ -49,14 +49,22 @@ int solucao(vector<Treno*> &trenos, int numero_presentes, int print){
 
 
     for (int i = 0; i < trenos.size(); i++){
-        
-        if (print == 1){
-            trenos[i]->print_itens();
-        }
+        if (!trenos[i]->itens.empty()){
+            
+            if (print == 1){
+                trenos[i]->print_itens();
+            }
 
-        count += 1;
-        sum += trenos[i]->itens.size();
+            count += 1;
+
+            for (int j = 0; j < trenos[i]->itens.size(); j++){
+                if (trenos[i]->itens[j] > 0){
+                    sum += 1;
+
+                }
+            }
         
+        }
     }
 
     if (print == 1){
@@ -193,8 +201,15 @@ void swap(vector<Treno*> &trenos, vector<int> &vetor_L, int capacidade_maxima){
     int item_um = 0, item_dois = 0;
     int indice_item_um = 0, indice_item_dois = 0;
     int peso_aux_um = 0, peso_aux_dois = 0;
+    int verificar = 0;
+    int cap1 = 0, cap2 = 0;
+    int nada = 0;
 
     for (int i = 0; i < trenos.size(); i++){
+
+        if (trenos[i]->itens.empty()){
+            continue;
+        }
 
         for (int j = 0; j < trenos[i]->itens.size(); j++){
             
@@ -202,7 +217,7 @@ void swap(vector<Treno*> &trenos, vector<int> &vetor_L, int capacidade_maxima){
 
             for (int k = 0; k < trenos.size(); k++){
 
-                if (k==i){
+                if ( (k==i) || (trenos[k]->itens.empty()) ){
                     continue;
                 }
 
@@ -212,10 +227,15 @@ void swap(vector<Treno*> &trenos, vector<int> &vetor_L, int capacidade_maxima){
                     folga = 0;
 
                     peso_dois = trenos[k]->pesos[l];
+                    
+                    cap1 = trenos[i]->get_capacidade() + peso_um - peso_dois;
+                    cap2 = trenos[k]->get_capacidade() + peso_dois - peso_um;
 
+                    if ( (cap1  <= capacidade_maxima) & (cap2 <= capacidade_maxima) & peso_um > 0 & peso_dois > 0 & cap1 > 0 & cap2 > 0 ){
 
-                    if ( (trenos[i]->get_capacidade() + peso_um - peso_dois <= capacidade_maxima) & (trenos[k]->get_capacidade() + peso_dois - peso_um <= capacidade_maxima) ){
-                        
+                        coloca_um = 1;
+                        coloca_dois = 1;
+
                         coloca_um = verificar_tuplas(trenos[i], trenos[k]->itens[l], vetor_L);
                         coloca_dois = verificar_tuplas(trenos[k], trenos[i]->itens[j], vetor_L);
                         
@@ -224,6 +244,7 @@ void swap(vector<Treno*> &trenos, vector<int> &vetor_L, int capacidade_maxima){
                         }
 
                     }
+
                     
                     if (folga < melhor_folga){
                         melhor_folga = folga;
@@ -235,6 +256,7 @@ void swap(vector<Treno*> &trenos, vector<int> &vetor_L, int capacidade_maxima){
                         item_dois = trenos[k]->itens[l];
 
                     }
+                
 
                 }
 
@@ -248,15 +270,14 @@ void swap(vector<Treno*> &trenos, vector<int> &vetor_L, int capacidade_maxima){
     peso_aux_dois = trenos[indice_treno_dois]->pesos[indice_item_dois];
 
     if (peso_aux_um == 0 & peso_aux_dois == 0){
-        cout << "Nao foi feito o swap" << endl;
-    
+        nada = 1;
     }else{
 
-        trenos[indice_treno_um]->set_capacidade(trenos[indice_treno_um]->get_capacidade() + peso_aux_um - trenos[indice_treno_dois]->pesos[indice_item_dois]);
+        trenos[indice_treno_um]->set_capacidade(trenos[indice_treno_um]->get_capacidade() + peso_aux_um - peso_aux_dois);
         trenos[indice_treno_um]->itens[indice_item_um] = item_dois;
         trenos[indice_treno_um]->pesos[indice_item_um] = peso_aux_dois;
 
-        trenos[indice_treno_dois]->set_capacidade(trenos[indice_treno_dois]->get_capacidade() + peso_aux_dois - trenos[indice_treno_um]->pesos[indice_item_um]);
+        trenos[indice_treno_dois]->set_capacidade(trenos[indice_treno_dois]->get_capacidade() + peso_aux_dois - peso_aux_um);
         trenos[indice_treno_dois]->itens[indice_item_dois] = item_um;
         trenos[indice_treno_dois]->pesos[indice_item_dois] = peso_aux_um;
 
@@ -269,11 +290,12 @@ void swap(vector<Treno*> &trenos, vector<int> &vetor_L, int capacidade_maxima){
 void treno_furado(vector<Treno*> &trenos, vector<int> &vetor_L){
 
     vector<int> inds_itens, trenos_remover;
-    int coloca;
-
+    int coloca, peso = 0;
 
     for (int i = 0; i < trenos.size(); i++){
-        trenos[i]->print_itens();
+        if (trenos[i]->itens.empty()){
+            continue;
+        }
 
         if (!inds_itens.empty()){
             inds_itens.clear();
@@ -281,17 +303,17 @@ void treno_furado(vector<Treno*> &trenos, vector<int> &vetor_L){
         }
 
         for (int j = 0; j < trenos[i]->itens.size(); j++){
-            inds_itens.push_back(trenos[i]->itens[j]);
+            inds_itens.push_back(trenos[i]->itens[j]); 
         }
 
         for (int l = 0; l < inds_itens.size(); l++){
 
             for (int k = 0; k < trenos.size(); k++){
-                if (k == i){
+                if ( (k == i) || (trenos[k]->itens.empty()) ){
                     continue;
                 }
 
-                if(trenos[k]->get_capacidade() >= trenos[i]->pesos[l]){
+                if(trenos[k]->get_capacidade() >= trenos[i]->pesos[l] & trenos[i]->pesos[l] > 0){
                     coloca = 1;
 
                     coloca = verificar_tuplas(trenos[k], inds_itens[l], vetor_L);
@@ -300,11 +322,12 @@ void treno_furado(vector<Treno*> &trenos, vector<int> &vetor_L){
                         continue;
 
                     }else{
-                        trenos[k]->set_capacidade(trenos[k]->get_capacidade() - trenos[i]->pesos[l]);
+                        peso = trenos[i]->pesos[l];
+                        trenos[k]->set_capacidade(trenos[k]->get_capacidade() - peso);
                         trenos[k]->itens.push_back(inds_itens[l]);
-                        trenos[k]->pesos.push_back(trenos[i]->pesos[l]);
+                        trenos[k]->pesos.push_back(peso);
                         
-                        trenos[i]->set_capacidade(trenos[i]->get_capacidade() + trenos[i]->pesos[l]);
+                        trenos[i]->set_capacidade(trenos[i]->get_capacidade() + peso);
                         trenos[i]->itens[l] = 0;
                         trenos[i]->pesos[l] = 0;
                         
@@ -316,23 +339,19 @@ void treno_furado(vector<Treno*> &trenos, vector<int> &vetor_L){
                         }
                         
                         if (soma == trenos[i]->itens.size()){
-                            trenos_remover.push_back(i);
+                            trenos[i]->itens.clear();
+                            trenos[i]->pesos.clear();
                         }
 
                         break;
                     }
 
                 }   
-        
                 
             }
         
         }       
         
-    }
-
-    for (int i = 0; i < trenos_remover.size(); i++){
-        trenos.erase(trenos.begin() + trenos_remover[i] - i);
     }
     
 }

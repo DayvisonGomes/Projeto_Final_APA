@@ -16,66 +16,66 @@ int main(){
     12,12,13,16,16,16,12,12,30,30,30,25,25,39,39,39,48,48
   };
 
+  int i = 17;
+
   cout << "Algoritimo Guloso\n" << endl;
 
-  for (int i = 0; instancias.size(); i++){
-
-    vector<int> vetor_p, vetor_L, info;
-    vector<Treno*> trenos;
-    string path = "../instancias/" + instancias[i] + ".txt";
+  vector<int> vetor_p, vetor_L, info;
+  vector<Treno*> trenos;
+  string path = "../instancias/" + instancias[i] + ".txt";
     
-    ler_arquivo(path, info, vetor_p, vetor_L);
+  ler_arquivo(path, info, vetor_p, vetor_L);
     
-    int numero_presentes = info[0];
-    int k = info[1];
-    int Q = info[2];
-    int numero_elementos_em_L = info[3];
-    int solu_viavel = 0;
-    int iteracoes_vnd = 2000;
-    int it = 0;
+  int numero_presentes = info[0];
+  int k = info[1];
+  int Q = info[2];
+  int numero_elementos_em_L = info[3];
+  int solu_viavel = 0, best_solution = 1000;
+  int iteracoes_vnd = 1000;
+  int it = 1;
 
-    clock_t tInicio, tFim, tDecorrido;
+  clock_t tInicio, tFim, tDecorrido;
 
-    tInicio = clock();
+  tInicio = clock();
 
-    guloso(&trenos, numero_presentes, Q, k, vetor_p, vetor_L);
-    solu_viavel = solucao(trenos, numero_presentes, 1);
+  guloso(&trenos, numero_presentes, Q, k, vetor_p, vetor_L);
+  solu_viavel = solucao(trenos, numero_presentes, 1);
 
-    tFim = clock();
-    tDecorrido = ((tFim - tInicio) / (CLOCKS_PER_SEC / 1000));
+  tFim = clock();
+  tDecorrido = ((tFim - tInicio) / (CLOCKS_PER_SEC / 1000));
 
-    cout << "Instancia: " << instancias[i] << endl;
-    cout << "Solucao gulosa: " << solu_viavel << endl;
-    cout << "Solucao otima: " << vetor_solu_otimos[i] << endl;
-    cout << "Tempo em ms: " << tDecorrido << endl;
-    cout << endl;
+  cout << "Instancia: " << instancias[i] << endl;
+  cout << "Solucao gulosa: " << solu_viavel << endl;
+  cout << "Solucao otima: " << vetor_solu_otimos[i] << endl;
+  cout << "Tempo em ms: " << tDecorrido << endl;
+  cout << endl;
 
-    while (it < iteracoes_vnd){
-      
-      if (it < 50){
-        swap(trenos, vetor_L, Q);
-        solu_viavel = solucao(trenos, numero_presentes, 0);
-      
-      }
-      
-      if (it > 50){
-        treno_furado(trenos, vetor_L);
-        solu_viavel = solucao(trenos, numero_presentes, 0);
+  while (it < iteracoes_vnd){
 
-      }
+    if (it < 500){
+      swap(trenos, vetor_L, Q);
+    }
 
+    if (it >= 500){
+      treno_furado(trenos, vetor_L);
+      solu_viavel = solucao(trenos, numero_presentes, 0);
+    }
+
+    
+    if (solu_viavel < best_solution){
+      best_solution = solu_viavel;
+      it = 0;
+
+    }else{
       it += 1;
 
     }
 
-    solu_viavel = solucao(trenos, numero_presentes, 1);
-
-
-    break;
-    
-  
   }
 
+  solu_viavel = solucao(trenos, numero_presentes, 1);
+  cout << "Solucao otima vnd: " << best_solution << endl;    
+  
   return 0;
 
 }
