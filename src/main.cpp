@@ -31,7 +31,7 @@ int main(){
   int Q = info[2];
   int numero_elementos_em_L = info[3];
   int solu_viavel = 0, best_solution = 1000;
-  int iteracoes_vnd = 1000;
+  int iteracoes_vnd = 50;
   int it = 1;
 
   clock_t tInicio, tFim, tDecorrido;
@@ -52,11 +52,11 @@ int main(){
 
   while (it < iteracoes_vnd){
 
-    if (it < 500){
+    if (it < 25){
       swap(trenos, vetor_L, Q);
     }
 
-    if (it >= 500){
+    if (it >= 25){
       treno_furado(trenos, vetor_L);
       solu_viavel = solucao(trenos, numero_presentes, 0);
     }
