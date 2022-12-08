@@ -32,14 +32,13 @@ int main(){
   int numero_elementos_em_L = info[3];
   int solu_viavel = 0, best_solution = 1000;
   int iteracoes_vnd = 50;
-  int it = 1;
 
   clock_t tInicio, tFim, tDecorrido;
 
   tInicio = clock();
 
   guloso(&trenos, numero_presentes, Q, k, vetor_p, vetor_L);
-  solu_viavel = solucao(trenos, numero_presentes, 1);
+  solu_viavel = solucao(trenos, numero_presentes, 0);
 
   tFim = clock();
   tDecorrido = ((tFim - tInicio) / (CLOCKS_PER_SEC / 1000));
@@ -50,31 +49,10 @@ int main(){
   cout << "Tempo em ms: " << tDecorrido << endl;
   cout << endl;
 
-  while (it < iteracoes_vnd){
-
-    if (it < 25){
-      swap(trenos, vetor_L, Q);
-    }
-
-    if (it >= 25){
-      treno_furado(trenos, vetor_L);
-      solu_viavel = solucao(trenos, numero_presentes, 0);
-    }
-
-    
-    if (solu_viavel < best_solution){
-      best_solution = solu_viavel;
-      it = 0;
-
-    }else{
-      it += 1;
-
-    }
-
-  }
-
+  cout << "Vnd\n" << endl;
+  vnd(trenos, vetor_L, Q, numero_presentes, iteracoes_vnd);
   solu_viavel = solucao(trenos, numero_presentes, 1);
-  cout << "Solucao otima vnd: " << best_solution << endl;    
+  cout << "Solucao vnd: " << solu_viavel << endl;    
   
   return 0;
 
