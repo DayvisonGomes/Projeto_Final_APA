@@ -31,7 +31,7 @@ int main(){
   int Q = info[2];
   int numero_elementos_em_L = info[3];
   int solu_viavel = 0, best_solution = 1000;
-  int iteracoes_vnd = 50;
+  int iteracoes_vnd = 10;
 
   clock_t tInicio, tFim, tDecorrido;
 
@@ -50,10 +50,20 @@ int main(){
   cout << endl;
 
   cout << "Vnd\n" << endl;
+
+  tInicio = clock();
+
   vnd(trenos, vetor_L, Q, numero_presentes, iteracoes_vnd);
-  solu_viavel = solucao(trenos, numero_presentes, 1);
-  cout << "Solucao vnd: " << solu_viavel << endl;    
+  solu_viavel = solucao(trenos, numero_presentes, 0);
+
+  tFim = clock();
+  tDecorrido = ((tFim - tInicio) / (CLOCKS_PER_SEC / 1000));
+
+  cout << "Solucao vnd: " << solu_viavel << endl;
+  cout << "Tempo em ms VND: " << tDecorrido << endl;
   
+  solu_viavel = solucao(trenos, numero_presentes, 0);
+
   return 0;
 
 }

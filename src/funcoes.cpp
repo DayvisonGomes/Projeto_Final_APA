@@ -194,7 +194,7 @@ void guloso(vector<Treno*> *trenos,int numero_presentes, int capacidade, int k, 
 }
 
 
-void swap(vector<Treno*> &trenos, vector<int> &vetor_L, int capacidade_maxima){
+int swap(vector<Treno*> &trenos, vector<int> &vetor_L, int capacidade_maxima){
 
  //minimizar o quao longe da capacidade maxima está
     
@@ -207,7 +207,6 @@ void swap(vector<Treno*> &trenos, vector<int> &vetor_L, int capacidade_maxima){
     int peso_aux_um = 0, peso_aux_dois = 0;
     int verificar = 0;
     int cap1 = 0, cap2 = 0;
-    int nada = 0;
 
     for (int i = 0; i < trenos.size(); i++){
 
@@ -228,7 +227,7 @@ void swap(vector<Treno*> &trenos, vector<int> &vetor_L, int capacidade_maxima){
 
                 for (int l = 0; l < trenos[k]->itens.size(); l++){
 
-                    folga = 0;
+                    folga = 1000;
 
                     peso_dois = trenos[k]->pesos[l];
                     
@@ -270,12 +269,14 @@ void swap(vector<Treno*> &trenos, vector<int> &vetor_L, int capacidade_maxima){
 
     }
 
-    peso_aux_um = trenos[indice_treno_um]->pesos[indice_item_um];
-    peso_aux_dois = trenos[indice_treno_dois]->pesos[indice_item_dois];
 
-    if (peso_aux_um == 0 & peso_aux_dois == 0){
-        nada = 1;
+    if (melhor_folga == 1000){
+        return 0;
+
     }else{
+
+        peso_aux_um = trenos[indice_treno_um]->pesos[indice_item_um];
+        peso_aux_dois = trenos[indice_treno_dois]->pesos[indice_item_dois];
 
         trenos[indice_treno_um]->set_capacidade(trenos[indice_treno_um]->get_capacidade() + peso_aux_um - peso_aux_dois);
         trenos[indice_treno_um]->itens[indice_item_um] = item_dois;
@@ -285,6 +286,7 @@ void swap(vector<Treno*> &trenos, vector<int> &vetor_L, int capacidade_maxima){
         trenos[indice_treno_dois]->itens[indice_item_dois] = item_um;
         trenos[indice_treno_dois]->pesos[indice_item_dois] = peso_aux_um;
 
+        return 1;
     }
 
     
@@ -295,6 +297,7 @@ void treno_furado(vector<Treno*> &trenos, vector<int> &vetor_L){
 
     vector<int> inds_itens, trenos_remover;
     int coloca, peso = 0;
+    int para = 0;
 
     for (int i = 0; i < trenos.size(); i++){
         if (trenos[i]->itens.empty()){
@@ -343,38 +346,40 @@ void treno_furado(vector<Treno*> &trenos, vector<int> &vetor_L){
                         }
                         
                         if (soma == trenos[i]->itens.size()){
+                            para = 1;
                             trenos[i]->itens.clear();
                             trenos[i]->pesos.clear();
                         }
 
-                        break;
+                        
                     }
 
                 }   
                 
             }
-        
-        }       
+            
+        }   
+
+        if (para == 1){
+            break;
+        }    
         
     }
     
 }
 
 void vnd(vector<Treno*> &trenos, vector<int> &vetor_L, int capacidade_maxima, int numero_presentes, int iteracoes_vnd){
-    int it = 0, solu_viavel = 0, best_solution = 100;
+    int it = 0, solu_viavel = 100, best_solution = 100;
+    int troca;
 
     while (it < iteracoes_vnd){
-
-        if (it < 25){
-            swap(trenos, vetor_L, capacidade_maxima);
-        }
-
-        if (it >= 25){
+        troca = swap(trenos, vetor_L, capacidade_maxima);
+        
+        if (troca == 1){
             treno_furado(trenos, vetor_L);
             solu_viavel = solucao(trenos, numero_presentes, 0);
         }
 
-    
         if (solu_viavel < best_solution){
             best_solution = solu_viavel;
             it = 0;
