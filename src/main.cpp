@@ -12,6 +12,12 @@ int main(){
     "n120_k150_A","n120_k150_B"
   };
 
+  vector<string> instancias_grandes = {
+    "n400_k200_A", "n400_k200_B",
+    "n500_k200_A", "n500_k200_B",
+    "n1000_k200_A", "n1000_k200_B"
+  };
+
   vector<int> vetor_solu_otimos = {
     12,12,13,16,16,16,12,12,30,30,30,25,25,39,39,39,48,48
   };
@@ -30,21 +36,23 @@ int main(){
   int k = info[1];
   int Q = info[2];
   int numero_elementos_em_L = info[3];
-  int solu_viavel = 0, best_solution = 1000;
-  int iteracoes_vnd = 10;
+  int solu_guloso = 0, best_solution = 1000;
+  int solu_vnd, solu_ils;
+  int iteracoes_vnd = 100;
 
   clock_t tInicio, tFim, tDecorrido;
 
   tInicio = clock();
 
   guloso(&trenos, numero_presentes, Q, k, vetor_p, vetor_L);
-  solu_viavel = solucao(trenos, numero_presentes, 0);
+  solu_guloso = solucao(trenos, numero_presentes, 0);
 
   tFim = clock();
   tDecorrido = ((tFim - tInicio) / (CLOCKS_PER_SEC / 1000));
 
   cout << "Instancia: " << instancias[i] << endl;
-  cout << "Solucao gulosa: " << solu_viavel << endl;
+  // cout << "Instancia: " << instancias_grandes[i] << endl;
+  cout << "Solucao gulosa: " << solu_guloso << endl;
   cout << "Solucao otima: " << vetor_solu_otimos[i] << endl;
   cout << "Tempo em ms: " << tDecorrido << endl;
   cout << endl;
@@ -54,16 +62,29 @@ int main(){
   tInicio = clock();
 
   vnd(trenos, vetor_L, Q, numero_presentes, iteracoes_vnd);
-  solu_viavel = solucao(trenos, numero_presentes, 0);
+  solu_vnd = solucao(trenos, numero_presentes, 0);
 
   tFim = clock();
   tDecorrido = ((tFim - tInicio) / (CLOCKS_PER_SEC / 1000));
 
-  cout << "Solucao vnd: " << solu_viavel << endl;
+  cout << "Solucao VND: " << solu_vnd << endl;
   cout << "Tempo em ms VND: " << tDecorrido << endl;
-  
-  solu_viavel = solucao(trenos, numero_presentes, 0);
 
+  cout << "\nILS\n" << endl;
+
+  trenos.clear();
+
+  tInicio = clock();
+  guloso(&trenos, numero_presentes, Q, k, vetor_p, vetor_L);
+  ils(trenos, vetor_L, Q, numero_presentes, iteracoes_vnd);
+  solu_ils = solucao(trenos, numero_presentes, 0);
+
+  tFim = clock();
+  tDecorrido = ((tFim - tInicio) / (CLOCKS_PER_SEC / 1000));
+
+  cout << "Solucao ILS: " << solu_ils << endl;
+  cout << "Tempo em ms ILS: " << tDecorrido << endl;
+  
   return 0;
 
 }
