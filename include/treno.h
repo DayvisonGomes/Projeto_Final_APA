@@ -4,6 +4,8 @@
 #include <iostream>
 #include <stdlib.h>
 #include <typeinfo>
+#include <cstdlib>
+#include <ctime>
 #include <time.h>
 using namespace std;
 

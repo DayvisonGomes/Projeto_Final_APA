@@ -22,23 +22,25 @@ int main(){
     12,12,13,16,16,16,12,12,30,30,30,25,25,39,39,39,48,48
   };
 
-  int i = 17;
+  int i = 5;
 
   cout << "Algoritimo Guloso\n" << endl;
 
-  vector<int> vetor_p, vetor_L, info;
-  vector<Treno*> trenos;
-  string path = "../instancias/" + instancias[i] + ".txt";
-    
+  vector<int> vetor_p, info;
+  vector<Treno*> trenos, trenos_copia;
+  string path = "../instancias_grandes/" + instancias_grandes[i] + ".txt";
+
+  vector<vector<int>> vetor_L(1001, vector<int>(1001));
+
   ler_arquivo(path, info, vetor_p, vetor_L);
-    
+
   int numero_presentes = info[0];
   int k = info[1];
   int Q = info[2];
   int numero_elementos_em_L = info[3];
   int solu_guloso = 0, best_solution = 1000;
   int solu_vnd, solu_ils;
-  int iteracoes_vnd = 100;
+  int r = 2;
 
   clock_t tInicio, tFim, tDecorrido;
 
@@ -50,10 +52,12 @@ int main(){
   tFim = clock();
   tDecorrido = ((tFim - tInicio) / (CLOCKS_PER_SEC / 1000));
 
-  cout << "Instancia: " << instancias[i] << endl;
-  // cout << "Instancia: " << instancias_grandes[i] << endl;
+  copia_vetor_guloso(trenos,trenos_copia);
+
+  // cout << "Instancia: " << instancias[i] << endl;
+  cout << "Instancia: " << instancias_grandes[i] << endl;
   cout << "Solucao gulosa: " << solu_guloso << endl;
-  cout << "Solucao otima: " << vetor_solu_otimos[i] << endl;
+  // cout << "Solucao otima: " << vetor_solu_otimos[i] << endl;
   cout << "Tempo em ms: " << tDecorrido << endl;
   cout << endl;
 
@@ -61,7 +65,7 @@ int main(){
 
   tInicio = clock();
 
-  vnd(trenos, vetor_L, Q, numero_presentes, iteracoes_vnd);
+  vnd(trenos, vetor_L, Q, numero_presentes, r, solu_guloso);
   solu_vnd = solucao(trenos, numero_presentes, 0);
 
   tFim = clock();
@@ -72,19 +76,16 @@ int main(){
 
   cout << "\nILS\n" << endl;
 
-  trenos.clear();
-
   tInicio = clock();
-  guloso(&trenos, numero_presentes, Q, k, vetor_p, vetor_L);
-  ils(trenos, vetor_L, Q, numero_presentes, iteracoes_vnd);
-  solu_ils = solucao(trenos, numero_presentes, 0);
+  ils(trenos_copia, vetor_L, Q, numero_presentes, r, solu_guloso);
+  solu_ils = solucao(trenos_copia, numero_presentes, 0);
 
   tFim = clock();
   tDecorrido = ((tFim - tInicio) / (CLOCKS_PER_SEC / 1000));
 
   cout << "Solucao ILS: " << solu_ils << endl;
   cout << "Tempo em ms ILS: " << tDecorrido << endl;
-  
+
   return 0;
 
 }
